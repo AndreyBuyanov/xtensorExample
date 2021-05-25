@@ -1,0 +1,29 @@
+name: Build Linux
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  VCPKG_DEFAULT_TRIPLET: x64-linux
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Install xtensor
+      run: vcpkg install xtensor[xsimd]:${{ env.VCPKG_DEFAULT_TRIPLET }}
+
+    - name: Configure
+      run: |
+        VCPKG_ROOT=$VCPKG_INSTALLATION_ROOT
+        cmake -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo -B build -G "Unix Makefiles"
+
+    - name: Build
+      run: cmake --build build --config RelWithDebInfo --target all

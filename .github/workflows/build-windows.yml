@@ -1,0 +1,32 @@
+name: Build Windows
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  VCPKG_DEFAULT_TRIPLET: x64-windows-static
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Install xtensor
+      shell: cmd
+      run: vcpkg install xtensor[xsimd]:${{ env.VCPKG_DEFAULT_TRIPLET }}
+
+    - name: Configure
+      shell: cmd
+      run: |
+        set VCPKG_ROOT=%VCPKG_INSTALLATION_ROOT%
+        cmake -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo -B build -G "Visual Studio 16 2019" -T host=x64 -A x64
+
+    - name: Build
+      shell: cmd
+      run: cmake --build build --config RelWithDebInfo --target ALL_BUILD

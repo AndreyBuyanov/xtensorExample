@@ -17,10 +17,6 @@ jobs:
 
     - uses: actions/checkout@v2
 
-    - name: Get info
-      run: |
-        echo $VCPKG_INSTALLATION_ROOT
-
     - name: Install xtensor
       run: vcpkg install xtensor[xsimd]:${{ env.VCPKG_DEFAULT_TRIPLET }}
 
